@@ -6,9 +6,27 @@ doc = nlp("2 eastern towers and fragments of curtain wall; dates given as C12 (P
 # out = [x for x in doc.to_dict()]
 # print (json.dumps(out, indent=2))
 
+nouns = []
+
 for sentence in doc.sentences:
     for word in sentence.words:
         if word.xpos == "NN" or word.xpos == "NNS":
-            print(word.text)
+            nouns.append(word)
 
-# print(doc)
+count = 0
+output = []
+
+while count<len(nouns):
+    if nouns[count].deprel!="compound":
+        output.append(nouns[count].lemma)
+    else:
+        if nouns[count].head== nouns[count+1].id:
+            output.append(nouns[count].lemma+ " "+ nouns[count+1].lemma)
+            count+=1
+    count+=1
+
+print(output)
+
+
+
+
