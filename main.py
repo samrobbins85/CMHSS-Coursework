@@ -2,12 +2,15 @@ import requests
 from bs4 import BeautifulSoup
 import stanza
 import re
+import csv
+from tqdm import tqdm
+import collections
 stanza.download('en') # download English model
 nlp = stanza.Pipeline('en') # initialize English neural pipeline
-url = "https://historicengland.org.uk/listing/the-list/list-entry/1025190"
+# url = "https://historicengland.org.uk/listing/the-list/list-entry/1025190"
 
 def details(tag):
-    return type(tag.get("class")) is list and "nhle-list-entry__outer-container" in tag.get("class") and "Details" in tag.contents[1].contents
+    return type(tag.get("class")) is list and "nhle-list-entry__outer-container" in tag.get("class") and "Details" in [item.contents[0] for item in tag.find_all("h2")]
 
 def extract_nouns(text):
     doc = nlp(text)
@@ -32,16 +35,32 @@ def extract_nouns(text):
                 output.append(nouns[count].lemma)
         else:
             if not re.match(r"c\d+", nouns[count].lemma):
-                if nouns[count].head== nouns[count+1].id:
-                    output.append(nouns[count].lemma+ " "+ nouns[count+1].lemma)
-                    count+=1
+                if len(nouns)<count:
+                    if nouns[count].head== nouns[count+1].id:
+                        output.append(nouns[count].lemma+ " "+ nouns[count+1].lemma)
+                        count+=1
         count+=1
     return list(dict.fromkeys(output))
 
 
+def proccess_url(url, details):
+    req = requests.get(url)
+    soup = BeautifulSoup(req.content, 'html.parser')
+    mydivs = soup.find(details)
+    details=""
+    for item in mydivs.children:
+        if item.name=="h2" and item.contents[0] == "Details":
+            details=item.findNext("p").get_text()
+            break
+    return extract_nouns(details)
 
-req = requests.get(url)
-soup = BeautifulSoup(req.content, 'html.parser')
-mydivs = soup.find_all(details)
-details = mydivs[0].p.get_text()
-print(extract_nouns(details))
+big_list=[]
+
+with open('NHLEExport.csv', 'r') as file:
+    reader = csv.DictReader(file)
+    for row in tqdm(reader):
+        nouns = proccess_url(dict(row)["Link"], details)
+        big_list+=nouns
+
+print(collections.Counter(big_list))
+
