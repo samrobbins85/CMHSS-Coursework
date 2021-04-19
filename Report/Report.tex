@@ -1,0 +1,37 @@
+\title{Computational Modelling in the Humanities and Social Sciences}
+\author{mbkb74}
+\date{}
+\documentclass[11pt]{article}
+\usepackage[a4paper, margin=2cm]{geometry}
+\usepackage[sorting=none]{biblatex}
+\addbibresource{bibliography.bib}
+
+\begin{document}
+\maketitle
+
+\section{Introduction}
+
+The task I have chosen is to model the features of castles in England by geographic location. There are many ways in which a castle can be built, such as if it has a moat, a portcullis and so on.
+
+\section{Sources of data and used modules}
+
+The main source of data will be the National Heritage List for England by Historic England \cite{nhle}. Data will be obtained through this using Beautiful Soup, a web scraping tool for Python \cite{bs}. The data will then be processed by Stanza, a Natural Language Processing Python library \cite{qi2020stanza}.
+
+\section{Implementation of models}
+
+The analysis of text uses multiple of the features from Stanza, first in using Part of Speech Tagging in order to find nouns and plural nouns in the sentences, as these are most likely to be the features I am looking for.
+
+I am also using the provided lemmas feature in order to just extract the singular versions of the nouns, so that if in some cases a feature is discussed in plural, and in some cases singular, they will be treated the same. This has both benefits and drawbacks, providing a benefit in increasing the matching, however the use of the plural may convey information about the features, such as if a castle has multiple towers, compared to one tower.
+
+The dependencies provided are also used to match together compound nouns, such as “Curtain wall”, as this provides more information than the separate nouns “curtain” and “wall”.
+
+
+\section{Evaluation of models}
+
+\section{Conclusion}
+
+\newpage
+\printbibliography
+
+
+\end{document}
