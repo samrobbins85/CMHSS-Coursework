@@ -6,8 +6,7 @@ import csv
 from tqdm import tqdm
 from OSGridConverter import grid2latlong
 from nuts_finder import NutsFinder
-import pandas as pd
-import json
+import collections
 stanza.download('en') # download English model
 nlp = stanza.Pipeline('en') # initialize English neural pipeline
 # url = "https://historicengland.org.uk/listing/the-list/list-entry/1025190"
@@ -66,28 +65,17 @@ def nuts(find_gr, soup):
     return nf.find(lat=l.latitude, lon=l.longitude)[1]["NUTS_ID"]
 
 
-# big_list=[]
+big_list=[]
 
-with open("50_features.json") as file:
-    features = json.load(file)
-nuts1_names = ["UKC", "UKD", "UKE", "UKF", "UKG", "UKH", "UKI", "UKJ", "UKK"]
-
-out = {}
-
-for item in features:
-    out[item]={key: 0 for key in nuts1_names}
-
-df = pd.DataFrame.from_dict(out)
-
-with open('mini.csv', 'r') as file:
+with open('NHLEExport.csv', 'r') as file:
     reader = csv.DictReader(file)
     for row in tqdm(reader):
         req = requests.get(dict(row)["Link"])
         soup = BeautifulSoup(req.content, 'html.parser')
         nouns = proccess_url(soup, details)
-        nuts1 = nuts(find_gr, soup)
-        for item in nouns:
-            if item in features:
-                df.loc[nuts1, item]+=1
+        # nuts1 = nuts(find_gr, soup)
+        # print(nuts1)
+        big_list+=nouns
 
-print(df)
+print(collections.Counter(big_list))
+

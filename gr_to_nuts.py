@@ -13,4 +13,4 @@ mydivs = soup.find_all(details)
 gr = mydivs[0].dd.contents[0]
 nf = NutsFinder()
 l=grid2latlong(gr)
-print(nf.find(lat=l.latitude, lon=l.longitude))
+print(nf.find(lat=l.latitude, lon=l.longitude)[1]["NUTS_ID"])
