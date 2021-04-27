@@ -60,10 +60,13 @@ def find_gr(tag):
 
 def nuts(find_gr, soup):
     mydivs = soup.find_all(find_gr)
-    gr = mydivs[0].dd.contents[0]
+    gr = mydivs[0].dd.contents[0].split(", ")[0]
     nf = NutsFinder()
     l=grid2latlong(gr)
-    return nf.find(lat=l.latitude, lon=l.longitude)[1]["NUTS_ID"]
+    location = nf.find(lat=l.latitude, lon=l.longitude)
+    if location == []:
+        return False
+    return location[1]["NUTS_ID"]
 
 
 # big_list=[]
@@ -76,18 +79,32 @@ out = {}
 
 for item in features:
     out[item]={key: 0 for key in nuts1_names}
+area_count = {key:0 for key in nuts1_names}
+
 
 df = pd.DataFrame.from_dict(out)
 
-with open('mini.csv', 'r') as file:
+with open('NHLEExport.csv', 'r') as file:
     reader = csv.DictReader(file)
     for row in tqdm(reader):
         req = requests.get(dict(row)["Link"])
         soup = BeautifulSoup(req.content, 'html.parser')
+        print(dict(row)["Link"])
         nouns = proccess_url(soup, details)
         nuts1 = nuts(find_gr, soup)
-        for item in nouns:
-            if item in features:
-                df.loc[nuts1, item]+=1
+        if nuts1:
+            area_count[nuts1]+=1
+            for item in nouns:
+                if item in features:
+                    df.loc[nuts1, item]+=1
+
+df2=pd.DataFrame(area_count, index=[0])
+
+df=df.div(df2.iloc[0], axis='rows')
+
+jason = df.to_json()
+
+with open("feature_stats.json", "w") as out_file:
+    json.dump(jason,out_file, indent=2)
 
 print(df)
