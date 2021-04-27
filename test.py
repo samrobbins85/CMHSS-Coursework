@@ -1,37 +1,16 @@
-import stanza
-import re
-stanza.download('en') # download English model
-nlp = stanza.Pipeline('en') # initialize English neural pipeline
-# Run the nlp on the text
-doc = nlp("2 eastern towers and fragments of curtain wall; dates given as C12 (Pevsner and Williamson); late C13 (Boyle); 1290 (Longstaff). C14 plan of 4 towers and curtain wall forming square enclosure with no keep; (compare Ford 1338, Chillingham 1344, Raby 1378) Coursed squared sandstone with ashlar dressings. 3 storeys. Southern tower has elliptical-headed entrance in the north face, 4 lancet windows in west ground floor of late C13 type. North tower has mullioned and transomed window in first floor north face. Historical note: Ravensworth Castle was the property of the Fitz-Marmadukes; then in C14 and C15 of the Lumleys; then of the Gascoignes, from whom Thomas Liddell, a Newcastle merchant, bought it in 1607. It remained in the Liddell family until 1976. Sir Thomas Liddell, later Lord Ravensworth, demolished all but these towers of the house then standing. A scheduled ancient monument.") # run annotation over a sentence
-# out = [x for x in doc.to_dict()]
-# print (json.dumps(out, indent=2))
+import json
+import pandas as pd
+with open("50_features.json") as file:
+    data = json.load(file)
+nuts1 = ["UKC", "UKD", "UKE", "UKF", "UKG", "UKH", "UKI", "UKJ", "UKK"]
 
-nouns = []
-# For every sentence and word
-for sentence in doc.sentences:
-    for word in sentence.words:
-        # If a non-proper noun or plural noun
-        if word.xpos == "NN" or word.xpos == "NNS":
-            # Add to list
-            nouns.append(word)
+out = {}
 
-count = 0
-output = []
+for item in data:
+    out[item]={key: 0 for key in nuts1}
 
-while count<len(nouns):
-    if nouns[count].deprel!="compound":
-        if not re.match(r"c\d+", nouns[count].lemma):
-            output.append(nouns[count].lemma)
-    else:
-        if not re.match(r"c\d+", nouns[count].lemma):
-            if nouns[count].head== nouns[count+1].id:
-                output.append(nouns[count].lemma+ " "+ nouns[count+1].lemma)
-                count+=1
-    count+=1
+df = pd.DataFrame.from_dict(out)
 
-print(list(dict.fromkeys(output)))
+df.loc["UKD", "tower"]+=1
 
-
-
-
+print(df)
