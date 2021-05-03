@@ -32,6 +32,7 @@ for item in entries:
                                 scope="europe")
     print("Figure generated")
     fig.update_geos(fitbounds="locations", visible=False)
+    fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
     print("Geos updated")
     fig.write_image("images/"+item+".png")
     print("Done")
