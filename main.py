@@ -13,9 +13,12 @@ from geojson_rewind import rewind
 stanza.download('en') # download English model
 nlp = stanza.Pipeline('en') # initialize English neural pipeline
 
+# This finds the details paragraph in a webpage processed with beautiful soup
 def details(tag):
     return type(tag.get("class")) is list and "nhle-list-entry__outer-container" in tag.get("class") and "Details" in [item.contents[0] for item in tag.find_all("h2")]
 
+
+# Given a text, this will return a list of the nouns in the text
 def extract_nouns(text):
     doc = nlp(text)
     nouns = []
@@ -44,6 +47,7 @@ def extract_nouns(text):
                         output.append(nouns[count].lemma+ " "+ nouns[count+1].lemma)
                         count+=1
         count+=1
+    # The return looks like this to remove duplicates
     return list(dict.fromkeys(output))
 
 
@@ -56,9 +60,11 @@ def proccess_url(soup, details):
             break
     return extract_nouns(details)
 
+# This finds the grid reference on the page processed with beautiful soup
 def find_gr(tag):
     return tag.name=="dl" and "National Grid Reference:" in tag.find("dt")
 
+# Given a webpage, this will return the nuts region the castle is in
 def nuts(find_gr, soup, nf):
     mydivs = soup.find_all(find_gr)
     gr = mydivs[0].dd.contents[0].split(", ")[0]
@@ -68,23 +74,21 @@ def nuts(find_gr, soup, nf):
         return False
     return location[1]["NUTS_ID"]
 
-
-# big_list=[]
-
-with open("improved_features_gt_5.json") as file:
-    features = json.load(file)
+# These are the names of the NUTS1 regions in England
 nuts1_names = ["UKC", "UKD", "UKE", "UKF", "UKG", "UKH", "UKI", "UKJ", "UKK"]
 
+# Used to set up the dataframe
 out = {}
-
-# for item in features:
 out["castle"]={key: 0 for key in nuts1_names}
+# Used to keep track of how many castles are in each area
 area_count = {key:0 for key in nuts1_names}
 
 
 df = pd.DataFrame.from_dict(out)
+# There is an error with maps later than 2013 in that the actual geojson file isn't returned
 nf = NutsFinder(year=2013, scale=60)
 
+# The file was generated from a search on Historic England's website
 with open('mini.csv', 'r') as file:
     reader = csv.DictReader(file)
     for row in tqdm(reader):
@@ -95,11 +99,10 @@ with open('mini.csv', 'r') as file:
         if nuts1:
             area_count[nuts1]+=1
             for item in nouns:
-                if item in df:
-                    df.loc[nuts1, item]+=1
-                else:
+                # This happens if the word hasn't been seen before
+                if item not in df:
                     df[item]=0
-                    df.loc[nuts1, item]+=1
+                df.loc[nuts1, item]+=1
 
 
 # Remove column if sum is less than 5, from stackoverflow: https://stackoverflow.com/questions/33990495/delete-a-column-in-a-pandas-dataframe-if-its-sum-is-less-than-x
@@ -112,8 +115,8 @@ df=df.div(df2.iloc[0], axis='rows')
 
 # Code sourced from https://focaalvarez.medium.com/mapping-the-uk-and-navigating-the-post-code-maze-4898e758b82f
 
-# Load map of the UK
-with open('new.geojson') as response:
+# Load map of the UK - file size optimized
+with open('shrunk.geojson') as response:
     counties = json.load(response)
 entries=df.columns
 df.index.name = 'nuts118cd'
