@@ -38,7 +38,7 @@ def extract_nouns(text):
                 output.append(nouns[count].lemma)
         else:
             if not re.match(r"c\d+", nouns[count].lemma):
-                if len(nouns)<count:
+                if count+1<len(nouns):
                     if nouns[count].head== nouns[count+1].id:
                         output.append(nouns[count].lemma+ " "+ nouns[count+1].lemma)
                         count+=1
@@ -58,10 +58,9 @@ def proccess_url(soup, details):
 def find_gr(tag):
     return tag.name=="dl" and "National Grid Reference:" in tag.find("dt")
 
-def nuts(find_gr, soup):
+def nuts(find_gr, soup, nf):
     mydivs = soup.find_all(find_gr)
     gr = mydivs[0].dd.contents[0].split(", ")[0]
-    nf = NutsFinder()
     l=grid2latlong(gr)
     location = nf.find(lat=l.latitude, lon=l.longitude)
     if location == []:
@@ -71,7 +70,7 @@ def nuts(find_gr, soup):
 
 # big_list=[]
 
-with open("50_features.json") as file:
+with open("improved_features_gt_5.json") as file:
     features = json.load(file)
 nuts1_names = ["UKC", "UKD", "UKE", "UKF", "UKG", "UKH", "UKI", "UKJ", "UKK"]
 
@@ -83,15 +82,15 @@ area_count = {key:0 for key in nuts1_names}
 
 
 df = pd.DataFrame.from_dict(out)
+nf = NutsFinder(year=2013, scale=60)
 
 with open('NHLEExport.csv', 'r') as file:
     reader = csv.DictReader(file)
     for row in tqdm(reader):
         req = requests.get(dict(row)["Link"])
         soup = BeautifulSoup(req.content, 'html.parser')
-        print(dict(row)["Link"])
         nouns = proccess_url(soup, details)
-        nuts1 = nuts(find_gr, soup)
+        nuts1 = nuts(find_gr, soup, nf)
         if nuts1:
             area_count[nuts1]+=1
             for item in nouns:
@@ -102,9 +101,8 @@ df2=pd.DataFrame(area_count, index=[0])
 
 df=df.div(df2.iloc[0], axis='rows')
 
-jason = df.to_json()
+jason = df.to_dict()
 
-with open("feature_stats.json", "w") as out_file:
+with open("improved_feature_stats.json", "w") as out_file:
     json.dump(jason,out_file, indent=2)
 
-print(df)

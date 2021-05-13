@@ -57,7 +57,7 @@ cover/
 
 # Django stuff:
 *.log
-local_settings.py
+local_settings.pyengland map stone type
 db.sqlite3
 db.sqlite3-journal
 
@@ -97,7 +97,7 @@ ipython_config.py
 # PEP 582; used by e.g. github.com/David-OConnor/pyflow
 __pypackages__/
 
-# Celery stuff
+# Celery stuffengland map stone type
 celerybeat-schedule
 celerybeat.pid
 
@@ -147,3 +147,6 @@ __pycache__
 *.log
 *.run.xml
 *.synctex.gz
+
+big_images
+improved_big_images

@@ -7,6 +7,7 @@ from tqdm import tqdm
 from OSGridConverter import grid2latlong
 from nuts_finder import NutsFinder
 import collections
+import json
 stanza.download('en') # download English model
 nlp = stanza.Pipeline('en') # initialize English neural pipeline
 # url = "https://historicengland.org.uk/listing/the-list/list-entry/1025190"
@@ -37,7 +38,7 @@ def extract_nouns(text):
                 output.append(nouns[count].lemma)
         else:
             if not re.match(r"c\d+", nouns[count].lemma):
-                if len(nouns)<count:
+                if count+1<len(nouns):
                     if nouns[count].head== nouns[count+1].id:
                         output.append(nouns[count].lemma+ " "+ nouns[count+1].lemma)
                         count+=1
@@ -54,15 +55,6 @@ def proccess_url(soup, details):
             break
     return extract_nouns(details)
 
-def find_gr(tag):
-    return tag.name=="dl" and "National Grid Reference:" in tag.find("dt")
-
-def nuts(find_gr, soup):
-    mydivs = soup.find_all(find_gr)
-    gr = mydivs[0].dd.contents[0]
-    nf = NutsFinder()
-    l=grid2latlong(gr)
-    return nf.find(lat=l.latitude, lon=l.longitude)[1]["NUTS_ID"]
 
 
 big_list=[]
@@ -73,9 +65,9 @@ with open('NHLEExport.csv', 'r') as file:
         req = requests.get(dict(row)["Link"])
         soup = BeautifulSoup(req.content, 'html.parser')
         nouns = proccess_url(soup, details)
-        # nuts1 = nuts(find_gr, soup)
-        # print(nuts1)
         big_list+=nouns
 
-print(collections.Counter(big_list))
+with open("improved_all_features.json", "w") as outfile:
+    json.dump(collections.Counter(big_list), outfile, indent=2)
+
 
