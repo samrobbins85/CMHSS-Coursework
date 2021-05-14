@@ -116,8 +116,8 @@ df=df.div(df2.iloc[0], axis='rows')
 # Code sourced from https://focaalvarez.medium.com/mapping-the-uk-and-navigating-the-post-code-maze-4898e758b82f
 
 # Load map of the UK - file size optimized
-with open('shrunk.geojson') as response:
-    counties = json.load(response)
+with open('shrunk.geojson') as shapefile:
+    counties = json.load(shapefile)
 entries=df.columns
 df.index.name = 'nuts118cd'
 df.reset_index(inplace=True)

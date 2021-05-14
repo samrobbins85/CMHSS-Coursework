@@ -14,7 +14,12 @@
 
 \section{Introduction}
 
-The task I have chosen is to model the features of castles in England by geographic location. There are many ways in which a castle can be built, such as if it has a moat, a portcullis and so on.
+The task I have chosen is to model the features of Castles in England by geographic location. While there were prehistoric hillforts and Roman forts in England prior to this, the main period of castle building in England started after the Battle of Hastings in 1066. A popular design of these was the Motte and Bailey castle, with the castle on a raised area of ground (the motte), and a range of supporting buildings protected by a wall (the bailey). The materials used here changed from wood to stone as time went on, which provided much better defence. As the design of the keep was refined, the development then moved onto the outer defences, improving the gatehouses and enclosure walls.
+
+Towards the end of the middle ages, the defence aspect of Castles became less important, and they started to be used as shows of status, with more space, and increasing the size of windows, which reduced the defence, but gave better views.
+
+While I have discussed here the studied aspect of how design has changed with time, there is less information about how design changes with area. Design might change due to the differing requirements of the area, along with differences in geology and geography. As discussed, castles are continually improved, with new designs based on the times, however some castles may have not kept up with these improvements due to the wealth of the owners, or because the castles are left behind.
+
 
 \section{Sources of data and used modules}
 
@@ -26,7 +31,7 @@ The analysis of text uses multiple of the features from Stanza, first in using P
 
 I am also using the provided lemmas feature in order to just extract the singular versions of the nouns, so that if in some cases a feature is discussed in plural, and in some cases singular, they will be treated the same. This has both benefits and drawbacks, providing a benefit in increasing the matching, however the use of the plural may convey information about the features, such as if a castle has multiple towers, compared to one tower.
 
-The dependencies provided are also used to match together compound nouns, such as “Curtain wall”, as this provides more information than the separate nouns “curtain” and “wall”.
+The dependencies provided are also used to match together compound nouns, such as “curtain wall”, as this provides more information than the separate nouns “curtain” and “wall”.
 
 In order to categorize the castles into sections, I am using NUTS1 regions of England \cite{nuts}, this is an EU specification which divides up countries, in this case, dividing England into 9 regions. There is the option to get more granular with NUTS2 and NUTS3 regions being smaller than NUTS1, however given the limited dataset of around 230 castles, I wanted to ensure there were many castles per region so that the trends would be visible.
 
@@ -111,70 +116,6 @@ Near the Scottish border, castles had to defend against Border Reivers, who's ma
 \end{figure}
 
 Vaults were used for storing livestock to protect them against the Reivers, and Passages and Shafts are useful for escaping the Castle should it become overrun. Integrating the stable into the castle also helps to protect horses, in comparison to other castles that may store them in nearby fields.
-
-
-
-
-
-% \begin{minipage}{0.45\textwidth}
-% 	\begin{figure}[H]
-% 		\centering
-% 		\includegraphics[width=\textwidth]{buttress.png}
-% 		\caption{Buttress}
-% 	\end{figure}
-% \end{minipage}
-% \begin{minipage}{0.45\textwidth}
-% 	\begin{figure}[H]
-% 		\centering
-% 		\includegraphics[width=\textwidth]{gatehouse.png}
-% 		\caption{Gatehouse}
-% 	\end{figure}
-% \end{minipage}
-
-% \begin{minipage}{0.45\textwidth}
-% 	\begin{figure}[H]
-% 		\centering
-% 		\includegraphics[width=\textwidth]{keep.png}
-% 		\caption{Keep}
-% 	\end{figure}
-% \end{minipage}
-% \begin{minipage}{0.45\textwidth}
-% 	\begin{figure}[H]
-% 		\centering
-% 		\includegraphics[width=\textwidth]{parapet.png}
-% 		\caption{Parapet}
-% 	\end{figure}
-% \end{minipage}
-
-% \begin{minipage}{0.45\textwidth}
-% 	\begin{figure}[H]
-% 		\centering
-% 		\includegraphics[width=\textwidth]{plinth.png}
-% 		\caption{Plinth}
-% 	\end{figure}
-% \end{minipage}
-% \begin{minipage}{0.45\textwidth}
-% 	\begin{figure}[H]
-% 		\centering
-% 		\includegraphics[width=\textwidth]{tower.png}
-% 		\caption{Tower}
-% 	\end{figure}
-% \end{minipage}
-
-% \begin{minipage}{0.45\textwidth}
-% 	\begin{figure}[H]
-% 		\centering
-% 		\includegraphics[width=\textwidth]{turret.png}
-% 		\caption{Turret}
-% 	\end{figure}
-% \end{minipage}
-% \begin{minipage}{0.45\textwidth}
-% 	\begin{figure}[H]
-% 		\centering
-% 		\includegraphics[width=\textwidth]{wall.png}
-% 		\caption{Wall}
-% 	\end{figure}
-% \end{minipage}
 
 \section{Conclusion}
 
